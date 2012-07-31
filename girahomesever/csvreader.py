@@ -1,5 +1,6 @@
 ﻿import csv
 import sys
+import time
 from datetime import datetime
 from bunch import Bunch
 
@@ -18,10 +19,11 @@ def parseCSV(filename):
                 row_data = dict()
                 for idx, value in enumerate(line):
                     row_data[column_names[idx]] = value
-                row_data['date'] = datetime.strptime(row_data['Datum+Uhrzeit'], '%d.%m.%Y %H:%M:%S')                    
-                print row_data
+                dt = datetime.strptime(row_data['Datum+Uhrzeit'], '%d.%m.%Y %H:%M:%S')                    
+                ts = time.mktime(dt.timetuple())
+                row_data['date'] = ts
                 rows.append(row_data)
         return rows
+
 if __name__ == '__main__':
     result = parseCSV(sys.argv[1])
-    import pdb; pdb.set_trace() 

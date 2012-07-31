@@ -10,6 +10,30 @@
 $(function () {
     var chart;
     $(document).ready(function() {
+
+       var json_data = null;
+
+        $.ajax({
+            type: 'GET',
+            url: 'getData',
+            dataType: 'json',
+            data: {},
+            async: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('error');
+            },
+            success: function(data) {
+                if (data != null) {
+                    values = data['Waermemengenzaehler Leistung (W)'];
+                    timestamps = data['date'];
+                    json_data = new Array();
+                    for (var i=0; i<timestamps.length; i++) {
+                        json_data.push([timestamps[i], values[i]]);
+                    }
+                }
+            }
+        }); 
+
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
@@ -35,45 +59,16 @@ $(function () {
                         color: '#4572A7'
                     }
                 },
-                labels: {
-                    formatter: function() {
-                        return this.value +' mm';
-                    },
-                    style: {
-                        color: '#4572A7'
-                    }
-                }
     
             }, 
             ],
-            tooltip: {
-                formatter: function() {
-                    var unit = {
-                        'Rainfall': 'mm',
-                        'Temperature': '°C',
-                        'Sea-Level Pressure': 'mb'
-                    }[this.series.name];
-    
-                    return ''+
-                        this.x +': '+ this.y +' '+ unit;
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'left',
-                x: 120,
-                verticalAlign: 'top',
-                y: 80,
-                floating: true,
-                backgroundColor: '#FFFFFF'
-            },
             series: [{
                 name: 'Rainfall',
                 color: '#4572A7',
                 type: 'line',
                 yAxis: 0,
-                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    
+                data: json_data,
+                      
             }]
         });
     });
